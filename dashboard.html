@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>lumenzin — Studio Dashboard</title>
+<meta name="description" content="Minimalist AI event photo delivery and face indexing dashboard for photographers.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@1,500;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="dashboard.css">
+<!-- GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+</head>
+<body class="dash-body">
+
+  <!-- MINIMALIST HEADER NAV -->
+  <header class="dash-header">
+    <div class="dash-header__inner">
+      <div class="dash-brand">
+        <a href="index.html" class="nav__logo">lumen<span>zin</span></a>
+        <span class="dash-tag">Studio</span>
+      </div>
+
+      <!-- Active Event Switcher Pill -->
+      <div class="event-pill-wrap" id="eventPillWrap">
+        <button class="event-pill-btn" id="eventPillBtn" aria-expanded="false" aria-controls="eventPillDropdown">
+          <span class="dot-live"></span>
+          <span class="event-title" id="currentEventTitle">Met Gala Afterparty 2026</span>
+          <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+
+        <div class="event-pill-dropdown" id="eventPillDropdown" hidden>
+          <div class="dropdown-item is-selected" data-name="Met Gala Afterparty 2026">
+            <strong>Met Gala Afterparty 2026</strong>
+            <span>1,420 photos • Live</span>
+          </div>
+          <div class="dropdown-item" data-name="Apex Tech Summit 2026">
+            <strong>Apex Tech Summit 2026</strong>
+            <span>4,890 photos • Synced</span>
+          </div>
+          <div class="dropdown-item" data-name="Vogue Autumn Runway">
+            <strong>Vogue Autumn Runway</strong>
+            <span>3,120 photos • Synced</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Header Actions -->
+      <div class="dash-header__right">
+        <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle light/dark theme" title="Toggle Light/Dark Theme">
+          <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+
+        <button class="dash-btn dash-btn--gold" id="topUploadBtn">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2.5v7M2.5 6h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <span>Upload Photos</span>
+        </button>
+
+        <a href="index.html" class="dash-btn dash-btn--ghost">
+          <span>Website</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN DASHBOARD CONTENT -->
+  <main class="dash-main">
+    
+    <!-- PAGE TITLE & STATS STRIP -->
+    <section class="dash-hero">
+      <div class="dash-hero__title">
+        <h1>Event Operations</h1>
+        <p>Real-time AI photo indexing &amp; instant guest gallery delivery.</p>
+      </div>
+
+      <!-- Minimalist Stat Cards -->
+      <div class="stat-grid">
+        <div class="stat-card">
+          <span class="stat-label">Indexed Photos</span>
+          <div class="stat-value">
+            <span class="stat-num" data-target="1420">1,420</span>
+            <span class="stat-sub">+24 live</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <span class="stat-label">AI Match Precision</span>
+          <div class="stat-value">
+            <span class="stat-num" data-target="99.4" data-decimals="1">99.4</span>
+            <span class="stat-unit">%</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <span class="stat-label">Unlocked Guest Galleries</span>
+          <div class="stat-value">
+            <span class="stat-num" data-target="382">382</span>
+            <span class="stat-sub">1.8s avg delivery</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <span class="stat-label">Storage Vault</span>
+          <div class="stat-value">
+            <span class="stat-num" data-target="44.8" data-decimals="1">44.8</span>
+            <span class="stat-unit">GB</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FUNCTIONAL TAB NAVIGATION -->
+    <nav class="nav-tabs" role="tablist">
+      <button class="tab-btn is-active" role="tab" aria-selected="true" data-tab="tabPhotos">
+        <span>Photos &amp; Albums</span>
+        <span class="badge-count" id="badgePhotoCount">12</span>
+      </button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="tabFaceSearch">
+        <span>AI Face Match</span>
+      </button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="tabGuestQr">
+        <span>Guest QR &amp; Access</span>
+      </button>
+    </nav>
+
+    <!-- ================= TAB 1: PHOTOS & ALBUMS ================= -->
+    <section class="tab-pane is-active" id="tabPhotos" role="tabpanel">
+
+      <!-- Minimalist Batch Upload Drag & Drop Zone -->
+      <div class="drop-zone" id="dropZone">
+        <input type="file" id="fileInput" multiple accept="image/*" class="sr-only">
+        <div class="drop-zone__content">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--gold-1)" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <div>
+            <strong>Drag &amp; drop photos here to auto-index with AI</strong>
+            <p>Supports RAW (CR3, NEF, ARW) and JPEG • Automatic 512-D vector face clustering</p>
+          </div>
+        </div>
+
+        <!-- Progress bar shown during upload simulation -->
+        <div class="upload-progress" id="uploadProgress" hidden>
+          <div class="progress-info">
+            <span id="uploadStatusText">Ingesting batch files...</span>
+            <span id="uploadPercent">0%</span>
+          </div>
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" id="progressBarFill"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls & Filter Toolbar -->
+      <div class="toolbar">
+        <div class="filter-group" id="filterGroup">
+          <button class="filter-btn is-active" data-filter="all">All Photos</button>
+          <button class="filter-btn" data-filter="matched">Matched (10)</button>
+          <button class="filter-btn" data-filter="flagged">VIP / Flagged (2)</button>
+        </div>
+
+        <div class="search-wrap">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input type="text" placeholder="Search photo ID or tag..." id="searchInput">
+        </div>
+      </div>
+
+      <!-- Photo Grid -->
+      <div class="gallery-grid" id="galleryGrid">
+        <!-- Rendered dynamically in JS -->
+      </div>
+    </section>
+
+    <!-- ================= TAB 2: AI FACE MATCH SEARCH ================= -->
+    <section class="tab-pane" id="tabFaceSearch" role="tabpanel" hidden>
+      <div class="face-search-box">
+        <div class="face-search-stage">
+          <div class="scanner-frame" id="scannerFrame">
+            <img src="https://picsum.photos/id/1005/700/500" alt="Test subject photo" id="scanSubjectImg">
+            
+            <svg class="scanner-svg" viewBox="0 0 700 500">
+              <line x1="0" y1="0" x2="700" y2="0" stroke="var(--teal)" stroke-width="3" id="laserBeam" opacity="0.8"/>
+              <g transform="translate(280, 140)" id="scanReticle">
+                <rect width="140" height="160" fill="none" stroke="var(--gold-1)" stroke-width="2" rx="8" stroke-dasharray="6 3"/>
+                <circle cx="45" cy="55" r="3" fill="var(--teal)"/>
+                <circle cx="95" cy="55" r="3" fill="var(--teal)"/>
+                <text x="0" y="-10" fill="var(--gold-1)" font-family="JetBrains Mono" font-size="11">SUBJECT #9042 [99.8%]</text>
+              </g>
+            </svg>
+          </div>
+
+          <div class="scanner-sidebar">
+            <h3>Biometric Neural Search</h3>
+            <p>Select or upload a selfie to find all matching event photos across the cloud vault instantly.</p>
+            
+            <div class="sample-select">
+              <span class="label">Sample Subjects:</span>
+              <div class="thumb-row">
+                <button class="thumb-btn is-active" data-img="https://picsum.photos/id/1005/700/500">
+                  <img src="https://picsum.photos/id/1005/80/80" alt="Sample 1">
+                </button>
+                <button class="thumb-btn" data-img="https://picsum.photos/id/1025/700/500">
+                  <img src="https://picsum.photos/id/1025/80/80" alt="Sample 2">
+                </button>
+                <button class="thumb-btn" data-img="https://picsum.photos/id/1062/700/500">
+                  <img src="https://picsum.photos/id/1062/80/80" alt="Sample 3">
+                </button>
+              </div>
+            </div>
+
+            <button class="dash-btn dash-btn--gold dash-btn--full" id="runScanBtn">
+              <span>Run AI Face Match</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="match-results-wrap">
+          <h4>Matched Recipient Gallery (6 Photos)</h4>
+          <div class="match-mini-grid" id="matchMiniGrid">
+            <div class="match-card"><img src="https://picsum.photos/id/1011/300/300" alt="Match"><span class="match-badge">99.8%</span></div>
+            <div class="match-card"><img src="https://picsum.photos/id/1012/300/300" alt="Match"><span class="match-badge">99.5%</span></div>
+            <div class="match-card"><img src="https://picsum.photos/id/1015/300/300" alt="Match"><span class="match-badge">99.1%</span></div>
+            <div class="match-card"><img src="https://picsum.photos/id/1027/300/300" alt="Match"><span class="match-badge">98.9%</span></div>
+            <div class="match-card"><img src="https://picsum.photos/id/1069/300/300" alt="Match"><span class="match-badge">98.7%</span></div>
+            <div class="match-card"><img src="https://picsum.photos/id/1074/300/300" alt="Match"><span class="match-badge">98.4%</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 3: GUEST QR & ACCESS ================= -->
+    <section class="tab-pane" id="tabGuestQr" role="tabpanel" hidden>
+      <div class="qr-layout">
+        <div class="qr-card">
+          <span class="qr-brand">LUMENZIN EVENT DESK</span>
+          <h2>Scan for Private Gallery</h2>
+          <p>Scan with smartphone camera to retrieve your personal photos live</p>
+
+          <div class="qr-box">
+            <svg viewBox="0 0 100 100" class="qr-svg">
+              <rect width="100" height="100" fill="#FFFFFF"/>
+              <g fill="#0A0A0A">
+                <rect x="8" y="8" width="26" height="26"/><rect x="66" y="8" width="26" height="26"/><rect x="8" y="66" width="26" height="26"/>
+                <rect x="16" y="16" width="10" height="10" fill="#FFF"/><rect x="74" y="16" width="10" height="10" fill="#FFF"/><rect x="16" y="74" width="10" height="10" fill="#FFF"/>
+                <rect x="42" y="8" width="6" height="6"/><rect x="52" y="8" width="6" height="6"/><rect x="42" y="20" width="6" height="6"/>
+                <rect x="42" y="42" width="16" height="16"/><rect x="66" y="42" width="6" height="6"/><rect x="80" y="42" width="6" height="6"/>
+                <rect x="42" y="66" width="6" height="6"/><rect x="42" y="80" width="6" height="6"/><rect x="60" y="66" width="6" height="26"/><rect x="80" y="60" width="12" height="6"/><rect x="80" y="80" width="12" height="12"/>
+              </g>
+            </svg>
+            <div class="qr-chip">lz</div>
+          </div>
+
+          <div class="qr-code-key">EVENT PASS: LZ-METGALA-2026</div>
+        </div>
+
+        <div class="qr-actions-card">
+          <h3>Table Card &amp; Display Settings</h3>
+          <p>Place printed display cards on venue tables or share direct link to event attendees.</p>
+          
+          <div class="btn-stack">
+            <button class="dash-btn dash-btn--gold dash-btn--full" id="printBtn">
+              <span>Print Table Display Card</span>
+            </button>
+            <button class="dash-btn dash-btn--ghost dash-btn--full" id="copyLinkBtn">
+              <span>Copy Direct Guest URL</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- LIGHTBOX MODAL -->
+  <div class="modal-backdrop" id="modalBackdrop" hidden>
+    <div class="modal-box" id="modalBox">
+      <button class="modal-close-btn" id="modalCloseBtn">&times;</button>
+      <div class="modal-content">
+        <div class="modal-media">
+          <img src="" alt="Selected photo" id="modalImg">
+        </div>
+        <div class="modal-info">
+          <span class="modal-tag" id="modalPhotoId">LZ-8841</span>
+          <h3 id="modalPhotoTitle">Met Gala Red Carpet — Arrival</h3>
+          
+          <div class="specs-list">
+            <div class="spec-item"><span>Resolution:</span> <strong id="modalRes">8640 x 5760</strong></div>
+            <div class="spec-item"><span>File Size:</span> <strong id="modalSize">44.8 MB RAW</strong></div>
+            <div class="spec-item"><span>AI Match:</span> <strong id="modalMatch">99.8% Confidence</strong></div>
+          </div>
+
+          <div class="tags-row" id="modalTagsRow">
+            <span class="tag-chip">#RedCarpet</span>
+            <span class="tag-chip">#EveningWear</span>
+          </div>
+
+          <button class="dash-btn dash-btn--gold dash-btn--full" id="modalDownloadBtn">
+            <span>Download RAW File</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST ALERTS -->
+  <div class="toast-stack" id="toastStack"></div>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>

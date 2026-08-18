@@ -1,0 +1,652 @@
+:root{
+  --black:#0A0A0A;
+  --black-2:#151515;
+  --page:#F4F4F4;
+  --white:#FFFFFF;
+  --ink:#18181A;
+  --ink-dim:#6B6B6E;
+  --ink-on-dark:#EDEDED;
+  --ink-on-dark-dim:#A6A6A6;
+  --gold-1:#E6D6A0;
+  --gold-2:#A9863E;
+  --gold-text:#241C08;
+  --teal:#00C99E;
+  --line-dark:rgba(255,255,255,0.12);
+  --line-light:rgba(0,0,0,0.08);
+  --ff-display:'Plus Jakarta Sans', sans-serif;
+  --ff-serif:'Playfair Display', serif;
+  --ff-mono:'JetBrains Mono', monospace;
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--ff-display); background:var(--page); color:var(--ink); line-height:1.55; overflow-x:hidden;}
+img{max-width:100%; display:block;}
+a{color:inherit; text-decoration:none;}
+h1,h2,h3,h4,h5{font-family:var(--ff-display); font-weight:700; letter-spacing:-0.01em;}
+.dot-gold{color:var(--gold-2);}
+
+/* ============ NAV ============ */
+.nav{
+  position:fixed; top:0; left:0; right:0; z-index:900;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:20px 4vw;
+  background:transparent;
+  transition:background 0.4s ease, box-shadow 0.4s ease, padding 0.3s ease;
+}
+.nav[data-state="light"]{
+  background:rgba(255,255,255,0.92);
+  backdrop-filter:blur(10px);
+  box-shadow:0 1px 0 var(--line-light);
+}
+.nav__logo{font-weight:800; font-size:19px; color:#fff; transition:color 0.4s;}
+.nav[data-state="light"] .nav__logo{color:var(--ink);}
+.nav__logo span{background:linear-gradient(120deg,var(--gold-1),var(--gold-2)); -webkit-background-clip:text; background-clip:text; color:transparent;}
+.nav__links{display:flex; gap:30px;}
+.nav__links a{font-size:13.5px; font-weight:500; color:#fff; opacity:0.85; transition:opacity 0.25s, color 0.4s;}
+.nav[data-state="light"] .nav__links a{color:var(--ink);}
+.nav__links a:hover{opacity:1;}
+.nav__cta{
+  font-size:13.5px; font-weight:700; color:var(--gold-text);
+  background:linear-gradient(120deg,var(--gold-1),var(--gold-2));
+  padding:10px 22px; border-radius:30px;
+  transition:transform 0.2s, box-shadow 0.2s;
+}
+.nav__cta:hover{transform:translateY(-1px); box-shadow:0 6px 18px rgba(169,134,62,0.35);}
+.nav__burger{display:none; background:none; border:none; cursor:pointer; flex-direction:column; gap:5px;}
+.nav__burger span{width:22px; height:2px; background:#fff;}
+.nav[data-state="light"] .nav__burger span{background:var(--ink);}
+
+/* ============ HERO ============ */
+.hero{
+  position:relative; height:100vh; min-height:680px;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--black); overflow:hidden;
+}
+/* Individual photo tiles scattered across the hero, each animated
+   independently (see script.js): they loop between a dim/blurred resting
+   state and a brief sharp/lit "focus" state, evoking the product's face-
+   indexing concept. A mouse-parallax tilt is layered on top of the whole
+   .hero__collage layer so the wall also responds to cursor movement. */
+.hero__collage{
+  position:absolute; inset:-6%;
+  will-change:transform;
+}
+.collage-tile{
+  position:absolute; width:125px; height:160px; border-radius:6px;
+  overflow:hidden; opacity:0.85;
+  filter:blur(1.5px) brightness(0.85) grayscale(0.05);
+  box-shadow:0 8px 24px rgba(0,0,0,0.45);
+  transition:filter 0.5s ease, opacity 0.5s ease, transform 0.5s ease, box-shadow 0.5s ease;
+}
+.collage-tile img{width:100%; height:100%; object-fit:cover; display:block;}
+.collage-tile.is-focus{
+  opacity:1; filter:blur(0) brightness(1.0) grayscale(0);
+  box-shadow:0 0 0 2px rgba(230,214,160,0.85), 0 20px 45px rgba(0,0,0,0.7);
+  transform:scale(1.12);
+  z-index:3;
+}
+.hero__collage-lines{position:absolute; inset:0; width:100%; height:100%; pointer-events:none; overflow:visible;}
+.hero__collage-lines line{stroke:rgba(0,201,158,0.6); stroke-width:1.5; transition:opacity 0.5s ease;}
+
+.hero__scrim{
+  position:absolute; inset:0; z-index:1;
+  background:radial-gradient(ellipse at 50% 45%, rgba(10,10,10,0.45) 0%, rgba(10,10,10,0.75) 60%, rgba(10,10,10,0.9) 100%);
+  pointer-events:none;
+}
+.hero__content{position:relative; z-index:2; text-align:center; max-width:900px; padding:0 24px;}
+.hero__title{
+  font-size:clamp(32px,5.4vw,58px); line-height:1.18; color:#fff; font-weight:700;
+}
+.hero__title em{
+  font-family:var(--ff-serif); font-style:italic; font-weight:600;
+  background:linear-gradient(120deg,var(--gold-1),var(--gold-2));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.hero__sub{color:var(--ink-on-dark-dim); font-size:16px; margin:22px 0 40px; font-weight:500;}
+.hero__discover{
+  display:inline-flex; align-items:center; gap:9px;
+  font-size:12.5px; letter-spacing:0.08em; text-transform:uppercase; font-weight:600;
+  color:var(--ink-on-dark); cursor:pointer;
+}
+.hero__discover svg{animation:bob 1.8s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(4px);}}
+
+/* ============ PINNED STORY ============ */
+/* NOTE: no position:sticky here on purpose — GSAP ScrollTrigger's `pin` option
+   below already switches this element to position:fixed and manages spacing.
+   Combining CSS sticky with ScrollTrigger's own pin on the same element causes
+   flicker/blank-out/jump bugs when the pin engages and releases. */
+.story-pin{position:relative; height:340vh; background:var(--black); overflow:hidden;}
+
+.features{padding:130px 6vw; background:var(--page); position:relative; z-index:10;}
+.story-pin__sticky{
+  height:100vh; width:100%;
+  display:grid; grid-template-columns:1fr 1fr; align-items:center;
+  padding:0 6vw; gap:40px;
+}
+.story-visual{position:relative; height:520px; display:flex; align-items:center; justify-content:center;}
+.story-slide{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; opacity:0; transform:translateY(24px) scale(0.97); transition:opacity 0.6s ease, transform 0.6s ease; pointer-events:none;}
+.story-slide.is-active{opacity:1; transform:translateY(0) scale(1); pointer-events:auto;}
+
+/* Step 1 "Shoot" — a full rectangular photo frame (NOT clipped to a
+   circle). The circle you see is a thin decorative ring drawn on TOP of
+   the photo, purely as an overlay — the photo itself fills the whole
+   rectangle edge to edge, straight corners. */
+.story-frame{
+  position:relative; width:480px; height:560px; border-radius:14px;
+  overflow:hidden; border:1px solid var(--line-dark);
+}
+.story-frame img{
+  width:100%; height:100%; object-fit:cover; display:block;
+  /* Starts blurred; script.js reduces this in real time as the user
+     scrolls through step 1, reaching 0 blur by the time step 1 completes. */
+  filter:blur(9px) brightness(0.75);
+  transition:filter 0.05s linear;
+}
+.story-frame__ring{
+  position:absolute; width:86%; aspect-ratio:1/1; border-radius:50%;
+  top:50%; left:50%; transform:translate(-50%,-50%);
+  border:1px solid rgba(255,255,255,0.22);
+  pointer-events:none;
+}
+.focus-box{position:absolute; width:34px; height:34px; border:1.5px solid var(--teal); border-radius:4px; box-shadow:0 0 10px rgba(0,201,158,0.5);}
+.hud-tags{
+  position:absolute; bottom:24px; left:50%; transform:translateX(-50%);
+  display:flex; gap:8px;
+}
+.hud-tags span{
+  font-family:var(--ff-mono); font-size:10.5px; letter-spacing:0.04em; color:var(--teal);
+  background:rgba(0,0,0,0.55); border:1px solid rgba(0,201,158,0.3);
+  padding:5px 9px; border-radius:3px;
+}
+
+/* Step 2 "Share" — cloud/sync panel with animated progress bar, matching
+   the reference site (it is NOT a circular photo like steps 1 and 3). */
+.sync-panel{
+  position:relative; width:420px; height:220px; border-radius:16px;
+  background:var(--black-2); border:1px solid var(--line-dark);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:16px; overflow:hidden;
+}
+.sync-panel__lines{position:absolute; inset:0; opacity:0.7;}
+.sync-panel__lines svg{width:100%; height:100%;}
+.sync-panel__icon{position:relative; z-index:1;}
+.sync-panel__bar{position:relative; z-index:1; width:70%; height:3px; background:rgba(255,255,255,0.08); border-radius:2px; overflow:hidden;}
+.sync-panel__fill{
+  height:100%; width:0%; border-radius:2px;
+  background:linear-gradient(90deg, var(--teal), var(--gold-1));
+}
+.sync-panel__terminal{position:relative; z-index:1; font-family:var(--ff-mono); font-size:11px; letter-spacing:0.05em; color:var(--ink-on-dark-dim);}
+
+.phone-mock{
+  width:260px; height:520px; border-radius:36px; background:#000;
+  border:2px solid #2a2a2a; position:relative; padding:26px 18px;
+  display:flex; flex-direction:column; align-items:center;
+  box-shadow:0 12px 32px rgba(0,0,0,0.45);
+}
+.phone-mock__notch{position:absolute; top:10px; left:50%; transform:translateX(-50%); width:70px; height:6px; border-radius:4px; background:#1c1c1c;}
+.phone-mock__time{align-self:flex-start; color:#fff; font-size:12px; font-family:var(--ff-mono); margin-top:6px;}
+/* Two swappable states inside the same phone shell: QR/awaiting, then the
+   curated-album confirmation — matches the reference site's step 3, which
+   isn't static, it flips to a second screen partway through the step. */
+.phone-mock__state{
+  position:absolute; top:120px; left:0; right:0; display:flex; flex-direction:column; align-items:center;
+  opacity:0; transform:translateY(10px); transition:opacity 0.5s ease, transform 0.5s ease; pointer-events:none;
+}
+.phone-mock__state.is-active{opacity:1; transform:translateY(0); pointer-events:auto;}
+.phone-mock__qr{background:#fff; padding:14px; border-radius:8px;}
+.phone-mock__label{color:var(--ink-on-dark-dim); font-size:12px; text-align:center; margin-top:22px; max-width:180px;}
+.phone-mock__status{margin-top:14px; font-family:var(--ff-mono); font-size:10.5px; letter-spacing:0.08em; color:var(--teal); display:flex; align-items:center; gap:6px;}
+.phone-mock__status .dot{width:6px; height:6px; border-radius:50%; background:var(--teal); box-shadow:0 0 6px var(--teal);}
+.phone-mock__state[data-phone-state="2"] {
+  top: 55px;
+  padding: 0 14px;
+  width: 100%;
+}
+.phone-mock__header {
+  text-align: center;
+  margin-bottom: 10px;
+}
+.phone-mock__badge {
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--teal);
+  background: rgba(0, 201, 158, 0.15);
+  border: 1px solid rgba(0, 201, 158, 0.3);
+  padding: 2px 7px;
+  border-radius: 8px;
+}
+.phone-mock__curated {
+  color: #fff;
+  font-weight: 700;
+  font-size: 15px;
+  margin-top: 4px;
+}
+.phone-mock__gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+.phone-gallery__main {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+.phone-gallery__row {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+.phone-gallery__row img {
+  width: calc(50% - 4px);
+  height: 90px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+.phone-mock__btn {
+  margin-top: 14px;
+  background: linear-gradient(120deg, var(--gold-1), var(--gold-2));
+  border: none;
+  color: var(--gold-text);
+  font-weight: 700;
+  font-size: 11.5px;
+  font-family: var(--ff-display);
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(169, 134, 62, 0.3);
+}
+
+.story-copy{position:relative; height:220px;}
+.story-text{position:absolute; inset:0; opacity:0; transform:translateY(18px); transition:opacity 0.6s ease, transform 0.6s ease; pointer-events:none;}
+.story-text.is-active{opacity:1; transform:translateY(0); pointer-events:auto;}
+.eyebrow-num{font-family:var(--ff-mono); font-size:14px; color:var(--gold-1); letter-spacing:0.1em;}
+.story-text h3{font-size:clamp(30px,3.6vw,44px); color:#fff; margin:14px 0 10px;}
+.story-text .tagline{font-family:var(--ff-serif); font-style:italic; font-weight:500; color:var(--gold-1); font-size:17px; margin-bottom:18px;}
+.story-text .body{color:var(--ink-on-dark-dim); max-width:420px; font-size:15px;}
+
+.story-progress{position:absolute; right:6vw; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:14px;}
+.story-progress span{width:6px; height:6px; border-radius:50%; background:var(--line-dark); transition:background 0.3s, transform 0.3s;}
+.story-progress span.is-active{background:var(--gold-1); transform:scale(1.6);}
+
+/* Wave divider between the dark pinned story section and the light
+   features section below. Sits at the very bottom of .story-pin (outside
+   the pinned sticky box), so it only enters view in the last moment of
+   scrolling through the section, right as the pin releases — matching
+   when it appears in the reference recording. */
+.story-wave{position:absolute; left:0; right:0; bottom:-1px; line-height:0; z-index:5; pointer-events:none;}
+.story-wave svg{width:100%; height:auto; display:block;}
+
+/* ============ SECTION HEAD ============ */
+.section-head{max-width:640px; margin:0 auto 60px; text-align:center;}
+.section-head h2{font-size:clamp(28px,3.6vw,42px); color:var(--ink);}
+.section-head p{color:var(--ink-dim); margin-top:14px; font-size:15.5px;}
+.section-head--inline{margin-bottom:36px; text-align:left; max-width:none;}
+
+/* ============ FEATURES ============ */
+.feature-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:26px; max-width:1180px; margin:0 auto;}
+.feature-card{
+  background:var(--white); border-radius:16px; padding:34px;
+  box-shadow:0 1px 3px rgba(0,0,0,0.04), 0 12px 24px rgba(0,0,0,0.03);
+  transition:transform 0.3s ease, box-shadow 0.3s ease;
+}
+.feature-card:hover{transform:translateY(-4px); box-shadow:0 20px 40px rgba(0,0,0,0.08);}
+.feature-card__icon{
+  width:46px; height:46px; border-radius:50%; margin-bottom:22px;
+  display:flex; align-items:center; justify-content:center;
+  background:linear-gradient(135deg,#F1E7C8,#D8C48C); color:var(--gold-text);
+}
+.feature-card h3{font-size:18px; margin-bottom:8px;}
+.feature-card p{font-size:14px; color:var(--ink-dim);}
+
+/* ============ HORIZONTAL SCENES ============ */
+/* No hardcoded vh height here anymore. Previously this was height:420vh as a
+   rough guess AND the JS separately computed an exact pixel scroll distance
+   for GSAP's pin — those two numbers didn't agree, and since the OUTER
+   wrapper (this element) was being pinned instead of the INNER 100vh sticky
+   box, once the shorter JS-computed distance finished the pin released early,
+   leaving a few hundred vh of leftover empty space to scroll through before
+   the next section. GSAP's pin-spacer now sizes this wrapper automatically. */
+.scenes-pin{position:relative; background:var(--page);}
+.scenes-pin__sticky{
+  height:100vh; width:100%; display:flex; flex-direction:column;
+  overflow:hidden; padding:32px 0 28px 6vw; box-sizing: border-box;
+}
+
+.scenes-head-wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 14px;
+  padding-right: 6vw;
+  flex-wrap: wrap;
+  gap: 12px;
+  flex: 0 0 auto;
+}
+
+.scenes-controls {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.scene-filters {
+  display: flex;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.04);
+  padding: 4px;
+  border-radius: 30px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.scene-filter-btn {
+  font-family: var(--ff-display);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: none;
+  background: transparent;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.scene-filter-btn:hover {
+  color: var(--ink);
+}
+
+.scene-filter-btn.is-active {
+  background: var(--white);
+  color: var(--ink);
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+}
+
+.scenes-progress-indicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.scenes-counter {
+  font-family: var(--ff-mono);
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--gold-2);
+}
+
+.scenes-progress-bar {
+  width: 90px;
+  height: 4px;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.scenes-progress-fill {
+  width: 10%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-1), var(--gold-2));
+  border-radius: 4px;
+  transition: width 0.2s linear;
+}
+
+.scenes-track {
+  display: flex;
+  gap: 22px;
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: 100%;
+  align-items: stretch;
+  padding-right: 6vw;
+  padding-bottom: 4px;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.scene-card {
+  position: relative;
+  height: 100%;
+  aspect-ratio: 3.4 / 4;
+  flex-shrink: 0;
+  max-height: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.2);
+  will-change: opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease, opacity 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.scene-card__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  z-index: 1;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  transition: transform 0.4s ease;
+}
+
+.scene-card:hover .scene-card__img {
+  transform: scale(1.05);
+}
+
+.scene-card:hover {
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.3);
+  border-color: var(--gold-1);
+}
+
+.scene-card.is-dimmed {
+  opacity: 0.2;
+  filter: grayscale(0.8);
+  pointer-events: none;
+}
+
+.scene-card.is-active-focus {
+  border: 2px solid var(--gold-1);
+  box-shadow: 0 20px 48px rgba(169, 134, 62, 0.35);
+}
+
+.scene-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.15) 30%, rgba(10,10,10,0.92) 80%, #0A0A0A 100%);
+  transition: background 0.3s ease;
+}
+
+.scene-card:hover::after {
+  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.1) 25%, rgba(10,10,10,0.96) 75%, #0A0A0A 100%);
+}
+
+.scene-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 3;
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  background: rgba(10, 10, 10, 0.85);
+  color: var(--gold-1);
+  border: 1px solid rgba(230, 214, 160, 0.4);
+  padding: 4px 10px;
+  border-radius: 20px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.scene-card__content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  padding: 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: linear-gradient(180deg, rgba(10,10,10,0) 0%, rgba(10,10,10,0.85) 35%, rgba(10,10,10,0.98) 100%);
+  backdrop-filter: blur(4px);
+  transition: transform 0.3s ease;
+}
+
+.scene-card:hover .scene-card__content {
+  transform: translateY(-2px);
+}
+
+.scene-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.scene-tags span {
+  font-family: var(--ff-mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  color: var(--teal);
+  background: rgba(0, 201, 158, 0.15);
+  border: 1px solid rgba(0, 201, 158, 0.35);
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.scene-card__content h3 {
+  color: #FFFFFF;
+  font-size: clamp(17px, 1.6vw, 21px);
+  font-weight: 800;
+  line-height: 1.25;
+  margin: 2px 0 0;
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+.scene-card__content p {
+  color: rgba(255, 255, 255, 0.88);
+  font-size: clamp(11.5px, 1.05vw, 13px);
+  line-height: 1.4;
+  margin: 0;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+.scene-card__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--gold-1);
+  text-decoration: none;
+  margin-top: 4px;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.scene-card__btn:hover {
+  transform: translateX(4px);
+  color: #FFFFFF;
+}
+
+/* ============ PRIVACY ============ */
+.privacy{padding:130px 6vw; background:var(--white);}
+.privacy-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:32px; max-width:1180px; margin:0 auto;}
+.privacy-item{padding:26px; border-left:2px solid var(--gold-1);}
+.privacy-item h4{font-size:16.5px; margin-bottom:8px;}
+.privacy-item p{font-size:13.5px; color:var(--ink-dim);}
+
+/* ============ SIGNUP + FAQ PANEL ============ */
+.panel{padding:100px 6vw 130px; background:var(--page);}
+.panel__inner{
+  max-width:1180px; margin:0 auto; background:var(--white); border-radius:24px;
+  display:grid; grid-template-columns:1fr 1fr; gap:0;
+  box-shadow:0 30px 70px rgba(0,0,0,0.06); overflow:hidden;
+}
+.panel__form, .panel__faq{padding:60px 50px;}
+.panel__form{border-right:1px solid var(--line-light);}
+.eyebrow-gold{font-family:var(--ff-mono); font-size:11.5px; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold-2); font-weight:600;}
+.panel__form h2, .panel__faq h2{font-size:28px; margin:12px 0 14px;}
+.panel__form p{color:var(--ink-dim); font-size:14.5px; margin-bottom:26px;}
+.panel__form label{display:block; font-size:11.5px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink-dim); margin-bottom:14px;}
+.panel__form input, .panel__form textarea{
+  width:100%; margin-top:8px; border:1px solid var(--line-light); border-radius:8px;
+  padding:12px 14px; font-family:var(--ff-display); font-size:14px; outline:none;
+  transition:border-color 0.2s;
+}
+.panel__form input:focus, .panel__form textarea:focus{border-color:var(--gold-2);}
+.btn-gold{
+  margin-top:8px; width:100%; display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  background:linear-gradient(120deg,var(--gold-1),var(--gold-2)); color:var(--gold-text);
+  font-weight:700; font-size:14.5px; padding:15px; border:none; border-radius:30px; cursor:pointer;
+  transition:transform 0.2s, box-shadow 0.2s;
+}
+.btn-gold:hover{transform:translateY(-2px); box-shadow:0 10px 24px rgba(169,134,62,0.35);}
+.panel__pills{display:flex; gap:16px; margin-top:18px; flex-wrap:wrap;}
+.panel__pills span{font-size:11.5px; color:var(--ink-dim); display:flex; align-items:center; gap:5px;}
+.panel__pills span::before{content:"●"; color:var(--gold-2); font-size:8px;}
+.signup__note{margin-top:14px; font-size:13px; color:var(--teal); font-weight:600;}
+
+.faq-list{border-top:1px solid var(--line-light);}
+.faq-item{border-bottom:1px solid var(--line-light);}
+.faq-q{
+  width:100%; text-align:left; background:none; border:none; cursor:pointer;
+  padding:18px 0; font-size:15px; font-weight:600;
+  display:flex; justify-content:space-between; align-items:center; color:var(--ink);
+}
+.faq-q span{color:var(--gold-2); font-size:18px; transition:transform 0.3s;}
+.faq-item.is-open .faq-q span{transform:rotate(45deg);}
+.faq-a{max-height:0; overflow:hidden; transition:max-height 0.35s ease;}
+.faq-a p{padding-bottom:18px; font-size:13.5px; color:var(--ink-dim);}
+
+/* ============ FOOTER ============ */
+.footer{background:var(--black); color:var(--ink-on-dark-dim); padding:80px 6vw 30px;}
+.footer__top{margin-bottom:60px;}
+.footer__top p{margin-top:14px; max-width:320px; font-size:13.5px;}
+.footer__cols{display:flex; gap:100px; margin-bottom:70px;}
+.footer__cols h5{font-family:var(--ff-mono); font-size:12px; color:#fff; letter-spacing:0.08em; margin-bottom:16px;}
+.footer__cols a{display:block; font-size:13.5px; margin-bottom:10px; transition:color 0.2s;}
+.footer__cols a:hover{color:var(--gold-1);}
+.footer__bottom{border-top:1px solid var(--line-dark); padding-top:22px; font-size:12.5px;}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width:980px){
+  .nav__links{display:none;}
+  .nav__burger{display:flex;}
+  .story-pin__sticky{grid-template-columns:1fr; text-align:center; gap:20px; padding-top:100px;}
+  .story-visual{height:400px;}
+  .story-frame{width:300px; height:360px;}
+  .sync-panel{width:300px; height:190px;}
+  .phone-mock{width:220px; height:440px;}
+  .story-copy{height:260px;}
+  .story-progress{display:none;}
+  .feature-grid{grid-template-columns:1fr 1fr;}
+  .privacy-grid{grid-template-columns:1fr 1fr;}
+  .panel__inner{grid-template-columns:1fr;}
+  .panel__form{border-right:none; border-bottom:1px solid var(--line-light);}
+}
+@media (max-width:560px){
+  .feature-grid, .privacy-grid{grid-template-columns:1fr;}
+  .footer__cols{gap:50px;}
+  .scene-card{aspect-ratio:3/4;}
+  .collage-tile{width:74px; height:96px;}
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation:none !important; transition:none !important;}
+}
